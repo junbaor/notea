@@ -1,87 +1,63 @@
-import NoteState from 'libs/web/state/note'
-import { removeMarkdown } from 'libs/web/utils/markdown'
-import { FC, useMemo } from 'react'
-import { NextSeo } from 'next-seo'
+import { FC, useMemo } from 'react';
 // TODO: Maybe can custom
-import 'highlight.js/styles/zenburn.css'
-import { PageMode } from 'libs/shared/page'
-import Error from 'next/error'
-import useI18n from 'libs/web/hooks/use-i18n'
+import 'highlight.js/styles/zenburn.css';
+import UIState from 'libs/web/state/ui';
+import InnerHTML from 'dangerously-set-html-content';
+import { NoteModel } from 'libs/shared/note';
+import pupa from 'pupa';
+import MainEditor from 'components/editor/main-editor';
+
+const MAX_WIDTH = 900;
 
 export const PostContainer: FC<{
-  baseURL: string
-  pageMode: PageMode
-  post?: string
-}> = ({ baseURL, pageMode, post = '' }) => {
-  const { t } = useI18n()
-  const { note } = NoteState.useContainer()
-  const description = useMemo(
-    () => removeMarkdown(note?.content).slice(0, 100),
-    [note]
-  )
+    isPreview?: boolean;
+    note?: NoteModel;
+}> = ({ isPreview = false, note }) => {
+    const {
+        settings: {
+            settings: { injection },
+        },
+    } = UIState.useContainer();
 
-  if (pageMode !== PageMode.PUBLIC) {
-    return <Error statusCode={404} title={t('Not a public page')}></Error>
-  }
+    const injectionHTML = useMemo(() => {
+        return pupa(injection ?? '', {
+            ...note,
+            url: typeof window !== 'undefined' ? location.href : null,
+        });
+    }, [injection, note]);
 
-  return (
-    <article className="prose mx-auto prose-sm lg:prose-2xl px-4 md:px-0">
-      <NextSeo
-        title={note?.title}
-        titleTemplate="%s - Powered by Notea"
-        description={description}
-        openGraph={{
-          title: note?.title,
-          description,
-          url: `${baseURL}/${note?.id}`,
-          images: [{ url: note?.pic ?? `${baseURL}/logo_1280x640.png` }],
-          type: 'article',
-          article: {
-            publishedTime: note?.date,
-          },
-        }}
-      />
-      <header>
-        <h1 className="pt-10">{note?.title}</h1>
-      </header>
-      <main
-        dangerouslySetInnerHTML={{
-          __html: post,
-        }}
-      ></main>
-      <style jsx>{`
-        .prose :glboal([title='left-50']) {
-          float: left;
-          width: 50%;
-          margin-right: 2em;
-          margin-bottom: 1em;
-          clear: initial;
-        }
+    const className = 'pt-10 px-6 m-auto max-w-full w-[900px]';
 
-        .prose :glboal([title='right-50']) {
-          float: right;
-          width: 50%;
-          margin-left: 2em;
-          margin-bottom: 1em;
-          clear: initial;
-        }
-
-        .prose :glboal(figcaption) {
-          text-align: center;
-        }
-
-        .prose :global(.task-list-item) {
-          padding-left: 0;
-        }
-
-        .prose :global(.task-list-item::before) {
-          content: none;
-        }
-
-        .prose :global(.task-list-item label) {
-          margin-left: 6px;
-        }
-      `}</style>
-    </article>
-  )
-}
+    return (
+        <>
+            <MainEditor
+                isPreview={isPreview}
+                note={note}
+                className={className}
+                readOnly
+            />
+            {isPreview ? null : (
+                <>
+                    {injection ? (
+                        <InnerHTML
+                            id="snippet-injection"
+                            className={className}
+                            style={{ width: MAX_WIDTH }}
+                            html={injectionHTML}
+                        />
+                    ) : null}
+                    <footer className="pb-10 text-gray-300 text-center my-20 text-sm">
+                        Written with{' '}
+                        <a
+                            href="https://github.com/notea-org/notea"
+                            target="_blank"
+                            rel="noreferrer"
+                        >
+                            Notea
+                        </a>
+                    </footer>
+                </>
+            )}
+        </>
+    );
+};

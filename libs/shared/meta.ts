@@ -1,30 +1,41 @@
 export enum NOTE_DELETED {
-  NORMAL,
-  DELETED,
+    NORMAL,
+    DELETED,
 }
 
 export enum NOTE_SHARED {
-  PRIVATE,
-  PUBLIC,
+    PRIVATE,
+    PUBLIC,
 }
 
-export type PAGE_META_KEY =
-  | 'title'
-  | 'pid'
-  | 'id'
-  | 'shared'
-  | 'pic'
-  | 'date'
-  | 'deleted'
+export enum NOTE_PINNED {
+    UNPINNED,
+    PINNED,
+}
 
-export const PAGE_META_KEY: PAGE_META_KEY[] = [
-  'title',
-  'pid',
-  'id',
-  'shared',
-  'pic',
-  'date',
-  'deleted',
-]
+export enum EDITOR_SIZE {
+    SMALL,
+    LARGE,
+    AS_WIDE_AS_POSSIBLE = 2
+}
 
-export const NUMBER_KEYS: PAGE_META_KEY[] = ['deleted', 'shared']
+export const PAGE_META_KEY = <const>[
+    'title',
+    'pid',
+    'id',
+    'shared',
+    'pic',
+    'date',
+    'deleted',
+    'pinned',
+    'editorsize',
+];
+
+export type metaKey = typeof PAGE_META_KEY[number];
+
+export const NUMBER_KEYS: metaKey[] = [
+    'deleted',
+    'shared',
+    'pinned',
+    'editorsize',
+];

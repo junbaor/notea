@@ -1,45 +1,53 @@
-import { NoteModel } from 'libs/shared/note'
-import { useState, useCallback, MouseEvent } from 'react'
-import { createContainer } from 'unstated-next'
+import { NoteModel } from 'libs/shared/note';
+import { useState, useCallback } from 'react';
+import RichMarkdownEditor from '@notea/rich-markdown-editor';
+import { createContainer } from 'unstated-next';
 
-const useModalIntance = () => {
-  const [visible, setVisible] = useState(false)
+const useModalInstance = () => {
+    const [visible, setVisible] = useState(false);
 
-  const open = useCallback(() => {
-    setVisible(true)
-  }, [])
+    const open = useCallback(() => {
+        setVisible(true);
+    }, []);
 
-  const close = useCallback(() => {
-    setVisible(false)
-  }, [])
+    const close = useCallback(() => {
+        setVisible(false);
+    }, []);
 
-  return { visible, open, close }
-}
+    return { visible, open, close };
+};
 
-const useAnchorIntance = <T>() => {
-  const [anchor, setAnchor] = useState<Element | null>(null)
-  const [data, setData] = useState<T>()
+const useAnchorInstance = <T>() => {
+    const [anchor, setAnchor] = useState<Element | null>(null);
+    const [data, setData] = useState<T>();
+    const [visible, setVisible] = useState(false);
 
-  const open = useCallback((target: Element | MouseEvent) => {
-    setAnchor(target instanceof Element ? target : target.currentTarget)
-  }, [])
+    const open = useCallback(() => {
+        setVisible(true);
+    }, []);
 
-  const close = useCallback(() => {
-    setAnchor(null)
-  }, [])
+    const close = useCallback(() => {
+        setVisible(false);
+    }, []);
 
-  return { anchor, open, close, data, setData }
-}
+    return { anchor, open, close, data, setData, visible, setAnchor };
+};
 
 const useModal = () => {
-  return {
-    search: useModalIntance(),
-    trash: useModalIntance(),
-    menu: useAnchorIntance<NoteModel>(),
-    share: useAnchorIntance<NoteModel>(),
-  }
-}
+    return {
+        search: useModalInstance(),
+        trash: useModalInstance(),
+        menu: useAnchorInstance<NoteModel>(),
+        share: useAnchorInstance<NoteModel>(),
+        preview: useAnchorInstance<{ id?: string }>(),
+        linkToolbar: useAnchorInstance<{
+            href: string;
+            view?: RichMarkdownEditor['view'];
+        }>(),
+        editorWidthSelect: useAnchorInstance<NoteModel>()
+    };
+};
 
-const PortalState = createContainer(useModal)
+const PortalState = createContainer(useModal);
 
-export default PortalState
+export default PortalState;

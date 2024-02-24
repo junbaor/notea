@@ -1,23 +1,43 @@
+const colors = require('tailwindcss/colors');
+const defaultConfig = require('tailwindcss/defaultConfig');
+
 module.exports = {
-  purge: ['./**/*.tsx'],
-  darkMode: 'class',
-  theme: {
-    extend: {
-      cursor: {
-        'col-resize': 'col-resize',
-      },
-      nightwind: {
-        typography: true,
-        colorClasses: ['divide', 'placeholder'],
-      },
+    mode: 'jit',
+    purge: ['./pages/**/*.tsx', './components/**/*.tsx'],
+    darkMode: 'class',
+    theme: {
+        colors: {
+            gray: colors.gray,
+            blue: colors.blue,
+            red: colors.red,
+            yellow: colors.yellow,
+            transparent: 'transparent',
+            current: 'currentColor',
+        },
+        screens: {
+            md: '768px',
+        },
+        extend: {
+            cursor: {
+                'col-resize': 'col-resize',
+            },
+            nightwind: {
+                typography: true,
+                colorClasses: ['divide', 'placeholder'],
+            },
+        },
+        fontFamily: {
+            sans: ['Noto Sans'].concat(defaultConfig.theme.fontFamily['sans']),
+            mono: defaultConfig.theme.fontFamily['mono']
+        },
     },
-  },
-  variants: {
-    extend: {
-      display: ['group-hover'],
-      backgroundColor: ['active'],
-      borderWidth: ['last'],
+    variants: {
+        extend: {
+            display: ['group-hover'],
+            visibility: ['group-hover'],
+            backgroundColor: ['active'],
+            borderWidth: ['last'],
+        },
     },
-  },
-  plugins: [require('@tailwindcss/typography'), require('nightwind')],
-}
+    plugins: [require('@tailwindcss/typography'), require('nightwind')],
+};

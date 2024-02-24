@@ -1,13 +1,5 @@
 /// <reference types="next" />
-/// <reference types="next/types/global" />
+/// <reference types="next/image-types/global" />
 
-declare module 'heroicons/react/outline/*' {
-  const content: React.FunctionComponent<React.SVGAttributes<SVGElement>>
-  export default content
-}
-
-declare module 'react-split'
-
-declare module 'remove-markdown'
-
-declare module '@headwayapp/react-widget'
+// NOTE: This file should not be edited
+// see https://nextjs.org/docs/basic-features/typescript for more information.

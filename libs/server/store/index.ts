@@ -1,16 +1,18 @@
-import { getEnv } from 'libs/shared/env'
-import { StoreS3 } from './providers/s3'
+import { StoreS3 } from './providers/s3';
+import { StoreProvider } from './providers/base';
+import { config } from 'libs/server/config';
 
-export function createStore(prefix = '') {
-  return new StoreS3({
-    accessKey: getEnv('STORE_ACCESS_KEY', undefined, true),
-    secretKey: getEnv('STORE_SECRET_KEY', undefined, true),
-    endPoint: getEnv('STORE_END_POINT'),
-    bucket: getEnv('STORE_BUCKET', 'notea'),
-    region: getEnv('STORE_REGION', 'us-east-1'),
-    pathStyle: getEnv('STORE_FORCE_PATH_STYLE', false),
-    prefix,
-  })
+export function createStore(): StoreProvider {
+    const cfg = config().store;
+    return new StoreS3({
+        accessKey: cfg.accessKey,
+        secretKey: cfg.secretKey,
+        endPoint: cfg.endpoint,
+        bucket: cfg.bucket,
+        region: cfg.region,
+        pathStyle: cfg.forcePathStyle,
+        prefix: cfg.prefix,
+    });
 }
 
-export { StoreProvider } from './providers/base'
+export { StoreProvider } from './providers/base';
